@@ -14,7 +14,7 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
-    "@gameswipe/shared": "workspace:*",
+    "@gameswipe/shared": "*",
     "cors": "^2.8.5",
     "express": "^4.19.2"
   },
