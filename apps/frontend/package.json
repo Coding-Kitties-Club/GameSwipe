@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint .",
+    "lint": "eslint -c ../../eslint.config.mjs .",
     "format": "prettier . --write",
     "format:check": "prettier . --check"
   },
