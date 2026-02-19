@@ -4,6 +4,7 @@ build
 coverage
 .env
 .env.*
+!.env.example
 .DS_Store
 
 # Vite / tooling
