@@ -1,0 +1,37 @@
+{
+  "name": "gameswipe",
+  "version": "1.0.0",
+  "description": "A Swipe Web App for deciding what Steam game to play with a group of friends.",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c auto \"npm -w apps/backend run dev\" \"npm -w apps/frontend run dev\"",
+    "build": "npm -w packages/shared run build && npm -w apps/backend run build && npm -w apps/frontend run build",
+    "test": "npm -ws run test",
+    "lint": "npm -ws run lint",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coding-Kitties-Club/GameSwipe.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Coding-Kitties-Club/GameSwipe/issues"
+  },
+  "homepage": "https://github.com/Coding-Kitties-Club/GameSwipe#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.2",
+    "prettier": "^3.8.1"
+  }
+}
