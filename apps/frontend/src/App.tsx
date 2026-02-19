@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import type { HealthResponse } from "@gameswipe/shared";
 
 function App() {
@@ -6,12 +6,15 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/health").then(async (r) => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return (await r.json()) as HealthResponse;
-    }).then(setData).catch((e: unknown) => {
-      setError(e instanceof Error ? e.message : String(e));
-    });
+    fetch("/api/health")
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return (await r.json()) as HealthResponse;
+      })
+      .then(setData)
+      .catch((e: unknown) => {
+        setError(e instanceof Error ? e.message : String(e));
+      });
   }, []);
 
   return (
@@ -23,4 +26,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
