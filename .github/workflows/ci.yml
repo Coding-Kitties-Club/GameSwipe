@@ -26,6 +26,9 @@ jobs:
       - name: Format check
         run: npm run format:check
 
+      - name: Build shared
+        run: npm -w packages/shared run build
+
       - name: Lint
         run: npm run lint
 
