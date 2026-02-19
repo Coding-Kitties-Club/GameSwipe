@@ -17,11 +17,13 @@ function App() {
       });
   }, []);
 
+  const pretty = (v: unknown) => (typeof v === "string" ? v : JSON.stringify(v, null, 2));
+
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
       <h1>GameSwipe</h1>
       <p>Backend health check:</p>
-      {error ? <pre>{error}</pre> : <pre>{data ? JSON.stringify(data, null, 2) : "Loading..."}</pre>}
+      {error ? <pre>{pretty(error)}</pre> : <pre>{data ? pretty(data) : "Loading..."}</pre>}
     </div>
   );
 }
