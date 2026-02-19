@@ -12,7 +12,7 @@
     "dev": "concurrently -n backend,frontend -c auto \"npm -w apps/backend run dev\" \"npm -w apps/frontend run dev\"",
     "build": "npm -w packages/shared run build && npm -w apps/backend run build && npm -w apps/frontend run build",
     "test": "npm --workspaces run test",
-    "lint": "npm --workspaces run lint",
+    "lint": "npm -w packages/shared run build && npm --workspaces run lint",
     "format": "prettier . --write",
     "format:check": "prettier . --check"
   },
