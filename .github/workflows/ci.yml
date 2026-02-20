@@ -51,6 +51,7 @@ jobs:
         run: npm run test
         env:
           DATABASE_URL: postgresql://gameswipe:gameswipe@localhost:5432/gameswipe_test
+          DATABASE_URL_TEST: postgresql://gameswipe:gameswipe@localhost:5432/gameswipe_test
           SESSION_SECRET: "0123456789abcdef0123456789abcdef"
 
       - name: Build
