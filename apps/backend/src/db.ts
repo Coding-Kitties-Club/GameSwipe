@@ -8,5 +8,5 @@ const shouldUseSsl =
 
 export const pool = new Pool({
   connectionString: env.DATABASE_URL,
-  ssl: shouldUseSsl ? { rejectUnauthorized: false } : false,
+  ssl: shouldUseSsl ? { rejectUnauthorized: false } : false
 });
