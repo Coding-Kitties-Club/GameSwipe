@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, RequestHandler } from "express";
 import { pool } from "../db";
 import { env } from "../env";
 import { ApiError } from "../errors";
@@ -8,13 +8,13 @@ export type AuthedRequest = Request & { auth?: { memberId: string } };
 
 type SessionRow = { member_id: string };
 
-export async function requireSession(req: AuthedRequest, _res: Response, next: NextFunction) {
-    try {
+export const requireSession: RequestHandler = (req, _res, next) => {
+    void (async () => {
         const cookies: Record<string, string | undefined> = (req as unknown as { cookies?: Record<string, string | undefined> }).cookies ?? {};
-
         const token = cookies[env.SESSION_COOKIE_NAME];
+
         if (typeof token !== "string" || token.length === 0) {
-            return next(new ApiError(401, "UNAUTHORISED", "Missing Session Cookie"));
+            throw new ApiError(401, "UNAUTHORISED", "Missing session cookie");
         }
 
         const tokenHash = hashToken(token);
@@ -30,13 +30,11 @@ export async function requireSession(req: AuthedRequest, _res: Response, next: N
             [tokenHash]
         );
 
-        if (result.rows.length === 0) {
-            return next(new ApiError(401, "UNAUTHORISED", "Invalid or Expired Session"));
+        const row = result.rows[0];
+        if (!row) {
+            throw new ApiError(401, "UNAUTHORISED", "Invalid or expired session");
         }
 
-        req.auth = { memberId: result.rows[0]!.member_id };
-        next();
-    } catch (err) {
-        return next(err);
-    }
-}
+        (req as AuthedRequest).auth = { memberId: row.member_id };
+    })().then(() => next()).catch(next);
+};
