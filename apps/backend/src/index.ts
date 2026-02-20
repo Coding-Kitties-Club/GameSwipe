@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import "./env";
+import { env } from "./env";
 
 const app = express();
 
@@ -15,7 +15,9 @@ app.get("/health", (_req, res) => {
   });
 });
 
-const port = Number(process.env.PORT ?? 3000);
+
+console.log("Loaded PORT =", env.PORT);
+const port = Number(env.PORT ?? 3000);
 
 app.listen(port, () => {
   console.log(`Backend listening on http://localhost:${port}`);
