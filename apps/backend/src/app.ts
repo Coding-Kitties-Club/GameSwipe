@@ -7,25 +7,25 @@ import { roomsRouter } from "./routes/rooms";
 import { errorHandler } from "./middleware/errorHandler";
 
 export function createApp() {
-    const app = express();
+  const app = express();
 
-    app.use(helmet());
-    app.use(express.json());
-    app.use(cookieParser());
+  app.use(helmet());
+  app.use(express.json());
+  app.use(cookieParser());
 
-    app.use(
-        "/rooms/join",
-        rateLimit({
-            windowMs: 60_000,
-            limit: 30,
-            standardHeaders: true,
-            legacyHeaders: false
-        })
-    );
+  app.use(
+    "/rooms/join",
+    rateLimit({
+      windowMs: 60_000,
+      limit: 30,
+      standardHeaders: true,
+      legacyHeaders: false
+    })
+  );
 
-    app.use(healthRouter);
-    app.use(roomsRouter);
+  app.use(healthRouter);
+  app.use(roomsRouter);
 
-    app.use(errorHandler);
-    return app;
+  app.use(errorHandler);
+  return app;
 }

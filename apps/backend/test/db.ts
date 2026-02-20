@@ -1,7 +1,7 @@
 import { pool } from "../src/db";
 
 export async function resetDb(): Promise<void> {
-    await pool.query(`
+  await pool.query(`
     TRUNCATE TABLE
       member_sessions,
       members,
@@ -12,5 +12,5 @@ export async function resetDb(): Promise<void> {
 }
 
 export async function closeDb(): Promise<void> {
-    await pool.end();
+  await pool.end();
 }
