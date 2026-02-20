@@ -1,17 +1,13 @@
+import fs from "node:fs";
 import path from "node:path";
-import dotenv from "dotenv";
 import { beforeAll } from "vitest";
+import { loadTestEnvPreferDotenv } from "./loadEnv";
 
-dotenv.config({
-  path: path.resolve(__dirname, "../../..", ".env"),
-  override: true
-});
+const loaded = loadTestEnvPreferDotenv();
 
 beforeAll(() => {
-  const testUrl = process.env.DATABASE_URL_TEST;
-  if (typeof testUrl !== "string" || testUrl.length === 0) {
-    throw new Error("DATABASE_URL_TEST is missing. Add DATABASE_URL_TEST to the repo root .env");
+  if (loaded.used === ".env.test") {
+    const tmpDir = path.resolve(process.cwd(), ".tmp");
+    fs.mkdirSync(tmpDir, { recursive: true });
   }
-
-  process.env.DATABASE_URL = testUrl;
 });

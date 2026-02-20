@@ -5,6 +5,7 @@ coverage
 .env
 .env.*
 !.env.example
+!.env.test
 .DS_Store
 
 # Vite / tooling
@@ -23,3 +24,6 @@ coverage
 **/vite.config.js
 **/vite.config.d.ts
 **/vite.config.d.ts.map
+
+# any temp files or folders
+**/.tmp
