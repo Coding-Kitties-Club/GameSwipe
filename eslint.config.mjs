@@ -12,6 +12,7 @@ const repoRoot = __dirname;
 
 const tsProjects = [
   path.join(repoRoot, "apps/backend/tsconfig.json"),
+  path.join(repoRoot, "apps/backend/tsconfig.test.json"),
   path.join(repoRoot, "apps/frontend/tsconfig.app.json"),
   path.join(repoRoot, "packages/shared/tsconfig.json")
 ];

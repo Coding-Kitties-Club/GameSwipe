@@ -4,8 +4,12 @@
     "module": "CommonJS",
     "outDir": "dist",
     "rootDir": "src",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "esModuleInterop": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }
