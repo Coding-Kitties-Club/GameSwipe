@@ -24,3 +24,11 @@ npm run test
 npm run format:check
 npm run format
 ```
+
+### Frontend
+
+Refer to [Frontend README](apps/frontend/README.md)
+
+### Backend
+
+Refer to [BACKEND README](apps/backend/README.md)
