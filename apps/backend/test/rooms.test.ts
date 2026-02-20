@@ -250,10 +250,14 @@ describe("Rooms API", () => {
         // After deletion, room fetch should be 410 for creator
         const resCreator = await creator.get(`/rooms/${roomId}`);
         expect(resCreator.status).toBe(410);
+        assertErrorBody(resCreator.body);
+        expect(resCreator.body?.error?.code).toBe("ROOM_GONE");
 
         // Joiner session should now be revoked; should get 401 on protected endpoint
         const resJoiner = await joiner.get(`/rooms/${roomId}`);
         expect(resJoiner.status).toBe(401);
+        assertErrorBody(resJoiner.body);
+        expect(resJoiner.body?.error?.code).toBe("UNAUTHORISED");
     });
 
     it("POST /rooms/join returns 410 if room deleted", async () => {

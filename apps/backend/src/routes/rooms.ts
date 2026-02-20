@@ -323,8 +323,9 @@ roomsRouter.delete("/rooms/:roomId", requireSession, asyncHandler(async (req: Au
             WHERE m.id = ms.member_id
             AND m.room_id = $1
             AND ms.revoked_at IS NULL
+            AND ms.member_id <> $2
             `,
-            [roomId]
+            [roomId, memberId]
         );
 
         await client.query("COMMIT");
