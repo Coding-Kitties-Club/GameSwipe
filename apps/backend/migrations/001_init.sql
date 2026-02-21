@@ -36,10 +36,11 @@ CREATE TABLE IF NOT EXISTS steam_identities (
     steamid64 TEXT NOT NULL,
     verified BOOLEAN NOT NULL DEFAULT FALSE,
     provider TEXT NOT NULL DEFAULT 'manual' CHECK (provider IN ('manual', 'openid')),
-    opend_claimed_id TEXT NULL,
+    openid_claimed_id TEXT NULL,
     openid_nonce TEXT NULL,
     linked_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     last_verified_at TIMESTAMPTZ NULL
 );
 
