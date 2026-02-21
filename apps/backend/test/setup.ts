@@ -6,7 +6,7 @@ import { env } from "../src/env";
 
 dotenv.config({
   path: path.resolve(__dirname, "../../..", ".env"),
-  override: true,
+  override: true
 });
 
 const MIGRATIONS_DIR = path.resolve(__dirname, "..", "migrations");
