@@ -13,7 +13,8 @@ const EnvSchema = z.object({
   DATABASE_URL_TEST: z.string().min(1),
   SESSION_SECRET: z.string().min(16),
   SESSION_COOKIE_NAME: z.string().default("gs_session"),
-  SESSION_TTL_DAYS: z.coerce.number().default(30)
+  SESSION_TTL_DAYS: z.coerce.number().default(30),
+  STEAM_WEB_API_KEY: z.string().min(1)
 });
 
 export const env = EnvSchema.parse(process.env);
