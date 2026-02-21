@@ -1,17 +1,63 @@
 import path from "node:path";
+import fs from "node:fs/promises";
 import dotenv from "dotenv";
 import { beforeAll } from "vitest";
+import { pool } from "../src/db";
 
 dotenv.config({
   path: path.resolve(__dirname, "../../..", ".env"),
-  override: true
+  override: true,
 });
 
-beforeAll(() => {
+const MIGRATIONS_DIR = path.resolve(__dirname, "..", "migrations");
+
+async function runSqlMigrations(): Promise<void> {
+  const entries = await fs.readdir(MIGRATIONS_DIR, { withFileTypes: true });
+  const files = entries
+    .filter((e) => e.isFile() && e.name.endsWith(".sql"))
+    .map((e) => e.name)
+    .sort((a, b) => a.localeCompare(b));
+
+  if (files.length === 0) {
+    throw new Error(`No .sql migrations found in ${MIGRATIONS_DIR}`);
+  }
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+      filename TEXT PRIMARY KEY,
+      applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `);
+
+  for (const filename of files) {
+    const already = await pool.query<{ filename: string }>(
+      `SELECT filename FROM schema_migrations WHERE filename = $1`,
+      [filename]
+    );
+    if (already.rows.length > 0) continue;
+
+    const sqlPath = path.join(MIGRATIONS_DIR, filename);
+    const sql = await fs.readFile(sqlPath, "utf8");
+
+    await pool.query("BEGIN");
+    try {
+      await pool.query(sql);
+      await pool.query(`INSERT INTO schema_migrations (filename) VALUES ($1)`, [filename]);
+      await pool.query("COMMIT");
+    } catch (err) {
+      await pool.query("ROLLBACK");
+      throw new Error(`Failed applying migration ${filename}: ${(err as Error).message}`);
+    }
+  }
+}
+
+beforeAll(async () => {
   const testUrl = process.env.DATABASE_URL_TEST;
   if (typeof testUrl !== "string" || testUrl.length === 0) {
     throw new Error("DATABASE_URL_TEST is missing. Add DATABASE_URL_TEST to the repo root .env");
   }
 
   process.env.DATABASE_URL = testUrl;
+
+  await runSqlMigrations();
 });
