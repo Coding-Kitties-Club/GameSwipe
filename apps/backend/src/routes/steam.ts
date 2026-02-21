@@ -5,6 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler";
 import type { AuthedRequest } from "../middleware/auth";
 import { requireSession } from "../middleware/auth";
 import { PutSteamIdentityBodySchema, type SteamIdentityResponse } from "../types/steam";
+import { z } from "zod";
 
 export const steamRouter = Router();
 
@@ -22,37 +23,42 @@ steamRouter.put(
     requireSession,
     asyncHandler(async (req: AuthedRequest, res) => {
         const memberId = requireMemberId(req);
-        const body = PutSteamIdentityBodySchema.parse(req.body);
+        try {
+            const body = PutSteamIdentityBodySchema.parse(req.body);
+            const result = await pool.query<SteamIdentityResponse>(
+                `
+                INSERT INTO steam_identities (member_id, steamid64, verified, provider, linked_at, updated_at)
+                VALUES ($1, $2, FALSE, 'manual', now(), now())
+                ON CONFLICT (member_id)
+                DO UPDATE SET
+                    steamid64 = EXCLUDED.steamid64,
+                    verified = FALSE,
+                    provider = 'manual',
+                    updated_at = now()
+                RETURNING steamid64, verified, provider
+                `,
+                [memberId, body.steamid64]
+            );
 
-        const result = await pool.query<{
-            steamid64: string;
-            verified: boolean;
-            provider: "manual" | "openid";
-        }>(
-            `
-            INSERT INTO steam_identities (member_id, steamid64, verified, provider, linked_at, updated_at)
-            VALUES ($1, $2, FALSE, 'manual', now(), now())
-            ON CONFLICT (member_id)
-            DO UPDATE SET
-                steamid64 = EXCLUDED.steamid64,
-                verified = FALSE,
-                provider = 'manual',
-                updated_at = now()
-            RETURNING steamid64, verified, provider
-            `,
-            [memberId, body.steamid64]
-        );
 
-        const row = result.rows[0];
-        if (!row) throw new ApiError(500, "INTERNAL_ERROR", "Failed to upsert Steam identity");
+            const row = result.rows[0];
+            if (!row) throw new ApiError(500, "INTERNAL_ERROR", "Failed to upsert Steam identity");
 
-        const response: SteamIdentityResponse = {
-            steamid64: row.steamid64,
-            verified: row.verified,
-            provider: row.provider,
-        };
+            const response: SteamIdentityResponse = {
+                steamid64: row.steamid64,
+                verified: row.verified,
+                provider: row.provider,
+            };
 
-        res.status(200).json(response);
+
+
+            res.status(200).json(response);
+        } catch (err: unknown) {
+            if (err instanceof z.ZodError) {
+                throw new ApiError(400, "INVALID_REQUEST", "Invalid request body", err.errors);
+            }
+            throw err;
+        }
     })
 );
 
