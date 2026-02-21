@@ -29,3 +29,18 @@ CREATE TABLE IF NOT EXISTS member_sessions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_sessions_member_id ON member_sessions(member_id);
+
+CREATE TABLE IF NOT EXISTS steam_identities (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_id uuid NOT NULL UNIQUE REFERENCES members(id) ON DELETE CASCADE,
+    steamid64 TEXT NOT NULL,
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
+    provider TEXT NOT NULL DEFAULT 'manual' CHECK (provider IN ('manual', 'openid')),
+    opend_claimed_id TEXT NULL,
+    openid_nonce TEXT NULL,
+    linked_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    last_verified_at TIMESTAMPTZ NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_steam_identities_member_id ON steam_identities(member_id);
