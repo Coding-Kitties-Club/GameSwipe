@@ -4,7 +4,8 @@ export type ApiErrorCode =
   | "FORBIDDEN"
   | "ROOM_NOT_FOUND"
   | "ROOM_GONE"
-  | "INTERNAL_ERROR";
+  | "INTERNAL_ERROR"
+  | "STEAM_IDENTITY_NOT_FOUND";
 
 export class ApiError extends Error {
   public readonly status: number;
