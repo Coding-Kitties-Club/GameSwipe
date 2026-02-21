@@ -45,7 +45,7 @@ beforeAll(async () => {
     throw new Error("DATABASE_URL_TEST is missing. Add DATABASE_URL_TEST to the repo root .env");
   }
 
-  process.env.DATABASE_URL = testUrl;
+  env.DATABASE_URL = testUrl;
 
   await runSqlMigrations();
 });
