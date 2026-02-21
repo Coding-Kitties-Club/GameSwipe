@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import { healthRouter } from "./routes/health";
 import { roomsRouter } from "./routes/rooms";
 import { errorHandler } from "./middleware/errorHandler";
+import { steamRouter } from "./routes/steam";
 
 export function createApp() {
   const app = express();
@@ -25,6 +26,7 @@ export function createApp() {
 
   app.use(healthRouter);
   app.use(roomsRouter);
+  app.use(steamRouter);
 
   app.use(errorHandler);
   return app;
