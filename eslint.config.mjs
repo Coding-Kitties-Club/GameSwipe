@@ -12,6 +12,7 @@ const repoRoot = __dirname;
 
 const tsProjects = [
   path.join(repoRoot, "apps/backend/tsconfig.json"),
+  path.join(repoRoot, "apps/backend/tsconfig.test.json"),
   path.join(repoRoot, "apps/frontend/tsconfig.app.json"),
   path.join(repoRoot, "packages/shared/tsconfig.json")
 ];
@@ -65,6 +66,20 @@ export default [
     rules: {
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }]
+    }
+  },
+
+  {
+    files: ["**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_"
+        }
+      ]
     }
   }
 ];

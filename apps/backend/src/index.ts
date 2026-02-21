@@ -1,22 +1,8 @@
-import express from "express";
-import cors from "cors";
-import "./env";
+import { createApp } from "./app";
+import { env } from "./env";
 
-const app = express();
+const app = createApp();
 
-app.use(cors());
-app.use(express.json());
-
-app.get("/health", (_req, res) => {
-  res.status(200).json({
-    ok: true,
-    service: "gameswipe-backend",
-    time: new Date().toISOString()
-  });
-});
-
-const port = Number(process.env.PORT ?? 3000);
-
-app.listen(port, () => {
-  console.log(`Backend listening on http://localhost:${port}`);
+app.listen(env.PORT, () => {
+  console.log(`Backend listening on http://localhost:${env.PORT}`);
 });
