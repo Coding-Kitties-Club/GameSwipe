@@ -9,6 +9,9 @@ This README documents the currently implemented endpoints:
 - Join room
 - Get room state
 - Delete room
+- Link Steam Identity
+- Get Steam Identity
+- Sync Steam Owned Games
 
 ## Run locally
 
@@ -29,10 +32,13 @@ SESSION_SECRET=...at least 16 chars...
 
 SESSION_COOKIE_NAME=gs_session
 SESSION_TTL_DAYS=30
-Start dev server
+
+STEAM_WEB_API_KEY=your_steam_web_api_key
 ```
 
-## Run from GameSwipe repo root
+## Start dev server
+
+Run from GameSwipe repo root
 
 ```BASH
 npm --workspace apps/backend run dev
@@ -101,6 +107,12 @@ Simple health check.
   "time": "2026-02-20T12:59:55.000Z"
 }
 ```
+
+---
+
+## Rooms
+
+Used to create and manage the rooms system.
 
 ### POST /rooms
 
@@ -258,3 +270,91 @@ Member sessions in the room are revoked.
 - `403 FORBIDDEN` if not a member, or not creator
 - `404 ROOM_NOT_FOUND` if roomId doesn’t exist
 - `410 ROOM_GONE` if already deleted
+
+---
+
+## Steam Integration
+
+Steam identity linking and owned-games syncing are supported.
+
+All Steam endpoints require an authenticated session cookie.
+
+---
+
+### PUT /steam/identity
+
+Link or update a Steam account (manual provider).
+
+- Validates `steamid64` format (17-digit string).
+- Verifies that the Steam account exists using the Steam Web API.
+- Does NOT prove ownership (OpenID will handle that in future).
+
+#### Request body
+
+```JSON
+{
+  "steamid64": "76561198000000000"
+}
+```
+
+#### Response `200`
+
+```JSON
+{
+  "steamid64": "76561198000000000",
+  "verified": false,
+  "provider": "manual"
+}
+```
+
+#### Errors
+
+- `400 INVALID_REQUEST` invalid steamid format
+- `401 UNAUTHORISED` missing/invalid session
+- `404 STEAM_ACCOUNT_NOT_FOUND` Steam account does not exist
+- `502 STEAM_UPSTREAM_ERROR` Steam API failure
+
+### GET /steam/identity
+
+Return the linked Steam identity for the current member.
+
+#### Response `200`
+
+```JSON
+{
+  "steamid64": "76561198000000000",
+  "verified": false,
+  "provider": "manual"
+}
+```
+
+#### Errors
+
+- `401 UNAUTHORISED` missing/invalid session
+- `404 STEAM_IDENTITY_NOT_FOUND` Steam account does not exist
+
+### POST /steam/library/sync
+
+Fetch and cache the user’s owned Steam games.
+
+- Uses `IPlayerService/GetOwnedGames`.
+- Caches results in `steam_owned_games`.
+
+#### Response `200`
+
+```JSON
+{
+  "steamid64": "76561198000000000",
+  "gameCount": 123,
+  "fetchedAt": "2026-02-21T15:10:00.000Z"
+}
+```
+
+#### Errors
+
+- `401 UNAUTHORISED`
+- `404 STEAM_IDENTITY_NOT_FOUND`
+- `403 STEAM_GAMES_NOT_VISIBLE` if owned games are not publicly visible
+- `502 STEAM_UPSTREAM_ERROR` if Steam API fails
+
+---
